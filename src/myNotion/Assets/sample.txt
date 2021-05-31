@@ -1,0 +1,239 @@
+3:
+attrs:
+class: (4) ["Tall", "Dark", "And", "Caring"]
+style: "color: black;"
+__proto__: Object
+children: Array(1)
+    0:
+        attrs: []
+        children: []
+        content: "I am a Span    "
+        hasChildren: false
+        isSVG: false
+        node: text
+        nodetype: "text"
+    __proto__: Object
+    length: 1
+    __proto__: Array(0)
+content: ""
+hasChildren: true
+isSVG: false
+node: span.Tall.Dark.And.Caring
+nodetype: "span"
+
+
+
+
+
+
+
+
+
+
+1:
+    attrs: []
+    children: []
+    content: "na wa for you oh "
+    hasChildren: false
+    isSVG: false
+    node: comment
+    nodetype: "comment"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let nodee = addAttr(createElem(arrValue), arrValue);
+    if (arrValue.hasChildren) {
+        nodee.appendChild(buildElem(arrValue.children))
+    }
+    
+
+    return nodee;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            for (let j = 0; j < newStyleNames.length; j++) {
+                            // If its not an Element node return
+                            if (prop === undefined) return
+    
+                            if (prop) {
+                                // If attribute exists on node already, update it
+                                if (prop === currStyleNames[j] || prop) {
+                                    
+                                    // If its a class attribute then only add new values to reduce DOM style reflow/recalculation
+                                    if (prop === "class") {
+                                        styleObj[prop].forEach(function (classVal, indexx) {
+                                            for (let i = 0; i < currMapObj["class"].length; i++) {
+                                                // If a particular class value already exists for a particular node's class skip it, else add it using classList.add()
+                                                // And if it is on the current DOM's UI and not on the template, remove it
+                                                if (classVal === currMapObj[prop][i]) {
+                                                    currMapObj["node"].classList.add(currMapObj[prop][i])
+                                                };
+                                                if (classVal !== currMapObj[prop][i]) {
+                                                    currMapObj["node"].classList.add(classVal);
+                                                } else if (currMapObj[prop][i] && classVal !== currMapObj[prop][i]) {
+                                                    currMapObj["node"].classList.remove(currMapObj[prop][i]);
+                                                }
+                                            }
+                                        })
+                                    }
+            
+                                    // Do not update styles for the node and children properties
+                                    else if (prop !== "class" && prop !== "node" && prop !== "children") {
+                                        currMapObj["node"].setAttribute(prop, styleObj[prop]);
+                                    }
+                                }
+                            }
+        
+                            
+        
+                            // If it the attribute desn't exist on the template UI node then remove it
+                            if (prop !== currStyleNames[j]) {
+                                currMapObj["node"].removeAttribute(currStyleNames[j]);
+                            }
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    newStyleNames.forEach(function (newStyleName, index) {
+                        console.log(currMapObj)
+                        console.log(styleObj)
+                        for (let j = 0; j < newStyleNames.length; j++) {
+                            // If its not an Element node return
+                            // if (prop === undefined) return
+    
+
+                            // If attribute exists on node already, update it
+                            if (newStyleName === currStyleNames[j]) {
+                                
+                                // If its a class attribute then only add new values to reduce DOM style reflow/recalculation
+                                if (newStyleName === "class") {
+                                    styleObj[newStyleName].forEach(function (classVal, indexx) {
+                                        for (let i = 0; i < currMapObj[newStyleName].length; i++) {
+                                            console.log("times")
+                                            // If a particular class value already exists for a particular node's class skip it, else add it using classList.add()
+                                            // And if it is on the current DOM's UI and not on the template, remove it
+                                            if (currMapObj[newStyleName][i]) {
+                                                if (classVal === currMapObj[newStyleName][i]) {
+                                                    return
+                                                }
+
+                                                if (classVal !== currMapObj[newStyleName][i]) {
+                                                    currMapObj["node"].classList.add(classVal);
+                                                    currMapObj["node"].classList.remove(currMapObj[newStyleName][i]);
+                                                    return
+                                                } 
+                                            }
+                                        }
+                                    })
+                                }
+        
+                                // Do not update styles for the node and children properties
+                                else if (newStyleName !== "class" && newStyleName !== "node" && newStyleName !== "children") {
+                                    currMapObj["node"].setAttribute(newStyleName, styleObj[newStyleName]);
+                                }
+                            }
+
+                            if (newStyleName === currStyleNames[j]) {
+                                currMapObj["node"].classList.remove(currStyleNames[j]);
+                            }
+        
+                            // // If the attribute exists on the template UI node and not on current UI node then add it
+                            // if (newStyleName !== currStyleNames[j]) {
+                            //     currMapObj["node"].setAttribute(newStyleName, styleObj[newStyleName]);
+                            // }
+
+                            // else {
+                            //     // currMapObj["node"].removeAttribute(currStyleNames[j])
+                            // }
+                        }
+                    })
