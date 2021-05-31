@@ -44,10 +44,12 @@ var parseToHtml = function ( htmlstring ) {
 var getDOMMap = function ( elem, isSVG ) {
     let element;
 
+    element = elem;
+
     // if elem is an id reference then get it, if node continue
     if ($$.strictTypeOf(elem) === "string") {
         element = $$.byId(elem);
-    };
+    }
 
     /**
      * helper function to retrieve attributes of node
@@ -104,7 +106,7 @@ var getDOMMap = function ( elem, isSVG ) {
 
 /**
  * If an element doesn't exist we'll need Notion to biuld up a new one
- * @param {Array} arrValue    An Array object of values representing the Node tree of the currently displayed UI starting from the "Injection/Root element"
+ * @param {Array} arrValue    An  object of values representing a node in the Node tree of the currently displayed UI starting from the "Injection/Root element"
  * @returns {Node|Element}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
  */
 var buildElem = function (arrValue) {
@@ -137,6 +139,9 @@ var buildElem = function (arrValue) {
     var addAttr = function (node, attrVal) {
         // if node is not an Element, abandon
         if (node.nodeType !== 1) return node;
+
+        // if it is an empty array then return ordinary node
+        if (!attrVal.attrs) return node
 
         // get array of string key values
         let attrObjKeys = Object.keys(attrVal.attrs);
@@ -217,6 +222,9 @@ var mapAttrs = function (node) {
 var diffAttrs = function (tempAttrMap, DOMNode) {
     // Get the node reference
     let nodee;
+
+    // else use as is
+    nodee = DOMNode;
 
     // if DOMNode is a reference then get it
     if (typeof DOMNode === "string") {
@@ -308,24 +316,28 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
 
 /**
- * @param {String} id   A reference to the currently displayed UI, from the "injection/Root element"
+ * @param {String|Node} id   A reference to the currently displayed UI, from the "injection/Root element"
  * @param {String} templateStr    A string value/presentation of the desired UI. A Template string.
  * @returns {Node}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
  */
-function DOMDiff ( id, templateStr, ref) {
+function DOMDiff ( id, templateStr) {
     let finalDoc;
 
     // get the reference node specified by id
-    let currentUI = $$.byId(id);
+    let currentUI = id;
+
+    if ($$.strictTypeOf(id) === "string") {
+        currentUI = $$.byId(id);
+    }
 
     // next, get the current UI's DOMMap
-    let currDOMMap = getDOMMap(currentUI);
+    let currDOMMap = getDOMMap(id);
 
     // get the Template string DOMMap
     let templateDOMMap = getDOMMap(parseToHtml(templateStr));
 
     // Get the template DOM style map
-    let newwMap =  __d.mapAttrs(__d.parseToHtml(templateStr));
+    let newMap =  mapAttrs(parseToHtml(templateStr));
 
     // check if the the current UI has more nodes than the template UI, and if so remove them, else continue
     if (currDOMMap.length > templateDOMMap.length) {
@@ -355,17 +367,17 @@ function DOMDiff ( id, templateStr, ref) {
 
             // if the node branch exists but isn't the same node, replace it, update and attach back to its parent
             if (curr[index] && (obj.nodetype !== curr[index].nodetype)) {
-                curr[index].node.parentNode.replaceChild(buildElem(obj), obj.node);
+                curr[index].node.parentNode.replaceChild(buildElem(obj), curr[index].node);
                 return;
             }
 
             // If it gets here, then chances are that it does exist and has same nodeType or nodetype property, 
             // but different attributes. So we'll just diff the attributes regardless
-            // code goes here....
+            diffAttrs(newMap, id);
             
 
 
-            // update textContent
+            // diff textContent too
             // code goes here...
 
 
@@ -378,11 +390,16 @@ function DOMDiff ( id, templateStr, ref) {
 
             
             // if node has children then diff them too
+            if (obj.hasChildren) {
+                smartCompare(curr[index].children, obj.children, curr[index].node);
+            }
             
         })
     }
+    console.log(currDOMMap);
+    console.log(templateDOMMap);
 
-    smartCompare();
+    smartCompare(currDOMMap, templateDOMMap,  currentUI);
 }
 
 
@@ -404,4 +421,4 @@ function DOMDiff ( id, templateStr, ref) {
 
 
 
-export { parseToHtml, getDOMMap, buildElem, mapAttrs, diffAttrs };
+export { parseToHtml, getDOMMap, buildElem, mapAttrs, diffAttrs, DOMDiff };

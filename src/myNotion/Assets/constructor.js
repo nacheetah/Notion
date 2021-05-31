@@ -192,10 +192,10 @@ console.log(__d.mapAttrs($$.selector("#inject-App")));
 
 
 let curr = `<div class="Old DOM Class" unchecked>old guy</div>`
-let neww = `   
+let neww = `
 hey
 <!--na wa for you oh -->
-<span role="submit" style="color: white;" unchecked class="Working You Stupid Bitch">I am a Span    </span>`
+<span role="submit" unchecked style="color: white;" class="Working You Stupid Bitch-ass">I am a Span <span class="inner-span">I am a span inside a span</span><div class="divider">And I'm a div</div>    </span>`
 
 let currrMap = __d.mapAttrs($$.selector("#inject-App"));
 let newwMap =  __d.mapAttrs(__d.parseToHtml(neww));
@@ -205,7 +205,7 @@ console.log(newwMap)
 
 
 console.log(currrMap)
-__d.diffAttrs(newwMap, "inject-App");
+// __d.diffAttrs(newwMap, $$.selector("#inject-App"));
 console.log($$.selector("#inject-App"));
 
 
@@ -228,6 +228,24 @@ console.log();
 console.log($$.selector("#inject-App"));
 
 
+
+
+
+
+
+
+
+
+
+
+// __d.DOMDiff("inject-App", neww);
+
+
+
+
+
+
+console.log($$.strictTypeOf("inject-App"))
 // Notion("hey", "hey")
 
 // console.log($$.byId("inject-App"));
