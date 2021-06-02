@@ -106,27 +106,34 @@ console.log(create())
 
 
 let naruto = [
-    {attrs: {class: ["Tall", "Dark", "And", "Caring"], style: "color: black;"},
-    children: {attrs: {class: ["Tall", "Dark", "And", "Caring"], style: "color: black;"},
-                children: {
-                        attrs: [],
-                        children: [],
-                        content: "I am a Span    ",
-                        hasChildren: false,
-                        isSVG: false,
-                        node: "text",
-                        nodetype: "text"
-                    },
-                content: "",
-                hasChildren: true,
-                isSVG: false,
-                node: "span.Tall.Dark.And.Caring",
-                nodetype: "div"},
-    content: "",
-    hasChildren: true,
-    isSVG: false,
-    node: "span.Tall.Dark.And.Caring",
-    nodetype: "span"}
+    {
+        attrs: {
+                class: ["Tall", "Dark", "And", "Caring"], style: "color: black;"
+            },
+        children: {
+            attrs: {
+                    class: ["Tall", "Dark", "And", "Caring"], style: "color: black;"
+                },
+            children: {
+                    attrs: [],
+                    children: [],
+                    content: "I am a Span    ",
+                    hasChildren: false,
+                    isSVG: false,
+                    node: "text",
+                    nodetype: "comment"
+                },
+            content: "",
+            hasChildren: true,
+            isSVG: false,
+            node: "span.Tall.Dark.And.Caring",
+            nodetype: "div"},
+        content: "",
+        hasChildren: true,
+        isSVG: false,
+        node: "span.Tall.Dark.And.Caring",
+        nodetype: "span"
+    }
 ]
 
 console.log(__d.buildElem(naruto[0]));
@@ -195,12 +202,12 @@ let curr = `<div class="Old DOM Class" unchecked>old guy</div>`
 let neww = `
 hey
 <!--na wa for you oh -->
-<span role="submit" unchecked style="color: white;" class="Working You Stupid Bitch-ass">I am a Span <span class="inner-span">I am a span inside a span</span><div class="divider">And I'm a div</div>    </span>`
+<span role="email" unchecked style="color: white;" class="Working You Stupid Bitch-ass">I am a Span <span class="inner-span">I am a span inside a span</span><div class="divider division">And I'm a div</div>    </span>`
 
 let currrMap = __d.mapAttrs($$.selector("#inject-App"));
 let newwMap =  __d.mapAttrs(__d.parseToHtml(neww));
 console.log(newwMap)
-
+console.log(newwMap[3].node.parentNode)
 
 
 
@@ -238,7 +245,8 @@ console.log($$.selector("#inject-App"));
 
 
 
-// __d.DOMDiff("inject-App", neww);
+__d.DOMDiff($$.selector("#inject-App"), __d.getDOMMap($$.selector("#inject-App")), __d.getDOMMap(__d.parseToHtml(neww)));
+
 
 
 

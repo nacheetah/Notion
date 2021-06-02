@@ -120,12 +120,16 @@ var buildElem = function (arrValue) {
      */
     var createElem = function (val) {
         if (val.nodetype === "text") {
+                console.log(val.nodetype)
             return document.createTextNode(val.content);
-        } else if (val.nodetype === "coment") {
+        } else if (val.nodetype === "comment") {
+                console.log(val.nodetype)
             return document.createComment(val.content);
         } else if (val.isSVG) {
+                console.log(val.nodetype)
             document.createElementNS("http://www.w3.org/2000/svg", val.nodetype);
         } else {
+            console.log(val.nodetype)
             return document.createElement(val.nodetype);
         }
     }
@@ -141,7 +145,7 @@ var buildElem = function (arrValue) {
         if (node.nodeType !== 1) return node;
 
         // if it is an empty array then return ordinary node
-        if (!attrVal.attrs) return node
+        if (!attrVal.attrs) return node;
 
         // get array of string key values
         let attrObjKeys = Object.keys(attrVal.attrs);
@@ -164,13 +168,13 @@ var buildElem = function (arrValue) {
 
 
 
-
-
     let node = addAttr(createElem(arrValue), arrValue);
 
     // recursively run it through all it's children
     if (arrValue.hasChildren) {
-        node.appendChild(buildElem(arrValue.children))
+        Array.prototype.forEach.call(arrValue.children, function (child) {
+            node.appendChild(buildElem(child));
+        })
     }
     return node;
 
@@ -239,6 +243,8 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
         let currAttrNames = Object.keys(currAttrMap[index]);
         let currAttrMapObj = currAttrMap[index];
         let similarAttrs = [];
+
+        console.log(currAttrNames)
 
         currAttrNames.forEach(function (currAttrName, index) {
             for (let h = 0; h < newAttrNames.length; h++) {
@@ -316,33 +322,28 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
 
 /**
- * @param {String|Node} id   A reference to the currently displayed UI, from the "injection/Root element"
+ * @param {String|Node} node   A reference to the currently displayed UI, from the "injection/Root element"
  * @param {String} templateStr    A string value/presentation of the desired UI. A Template string.
  * @returns {Node}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
  */
-function DOMDiff ( id, templateStr) {
-    let finalDoc;
-
-    // get the reference node specified by id
-    let currentUI = id;
-
-    if ($$.strictTypeOf(id) === "string") {
-        currentUI = $$.byId(id);
-    }
+function DOMDiff ( node, currDOMMap, templateDOMMap) {
 
     // next, get the current UI's DOMMap
-    let currDOMMap = getDOMMap(id);
+    // let currDOMMap = getDOMMap(currentUI);
 
     // get the Template string DOMMap
-    let templateDOMMap = getDOMMap(parseToHtml(templateStr));
+    // let templateDOMMap = getDOMMap(parseToHtml(templateStr));
 
     // Get the template DOM style map
-    let newMap =  mapAttrs(parseToHtml(templateStr));
+    // let newMap =  mapAttrs(parseToHtml(templateStr));
 
-    // check if the the current UI has more nodes than the template UI, and if so remove them, else continue
+
+    // check if the the current UI has more nodes than the template UI, and if so remove them, else continue CORRECT AND NEEDED!!!
     if (currDOMMap.length > templateDOMMap.length) {
-        currDOMMap.splice(templateDOMMap.length, currDOMMap.length);
+        currDOMMap.splice((templateDOMMap.length), currDOMMap.length);
     }
+    console.log(currDOMMap);
+    console.log(templateDOMMap);
 
     /**
      * if an element doesn't exist we'll let Notion biuld up a new one from ground up
@@ -350,7 +351,7 @@ function DOMDiff ( id, templateStr) {
      * @param {Array} template    An Array object of values representing the Node tree of the template to be displayed.
      * @returns {Node}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
      */
-    var smartCompare = function (curr, template, root) {
+    var smartCompare = function (root, curr, template) {
         // we get our documentFragment ready
         let node = document.createDocumentFragment();
 
@@ -373,7 +374,7 @@ function DOMDiff ( id, templateStr) {
 
             // If it gets here, then chances are that it does exist and has same nodeType or nodetype property, 
             // but different attributes. So we'll just diff the attributes regardless
-            diffAttrs(newMap, id);
+            // diffAttrs(mapAttrs(obj.node.parentNode), root);
             
 
 
@@ -391,7 +392,7 @@ function DOMDiff ( id, templateStr) {
             
             // if node has children then diff them too
             if (obj.hasChildren) {
-                smartCompare(curr[index].children, obj.children, curr[index].node);
+                // smartCompare(curr[index].children, obj.children, curr[index].node);
             }
             
         })
@@ -399,7 +400,9 @@ function DOMDiff ( id, templateStr) {
     console.log(currDOMMap);
     console.log(templateDOMMap);
 
-    smartCompare(currDOMMap, templateDOMMap,  currentUI);
+    smartCompare(node, currDOMMap, templateDOMMap);
+
+    // smartCompare(currDOMMap, templateDOMMap,  currentUI);
 }
 
 
