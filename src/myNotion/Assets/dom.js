@@ -195,7 +195,7 @@ var buildElem = function (arrValue) {
 var mapAttrs = function (node) {
     return Array.prototype.map.call(node.childNodes, function (node) {
         // If it isn't an Element node then return an empty object
-        if (node.nodeType !== 1) return {};
+        if (node.nodeType !== 1) return undefined;
         
         let attrs = node.attributes
         let details = {}
@@ -239,18 +239,23 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
     // Loop through the template style map and compare to current one and effect necessary changes
     tempAttrMap.forEach(function (attrObj, index) {
+
+        // let vall = currAttrMap[index]
+        if (currAttrMap[index] === undefined || attrObj === undefined) return;
+
         let newAttrNames = Object.keys(attrObj);
         let currAttrNames = Object.keys(currAttrMap[index]);
         let currAttrMapObj = currAttrMap[index];
         let similarAttrs = [];
 
-        console.log(currAttrNames)
+        console.log(currAttrMap[index])
 
+        // Take all similar Attributes and put them in a new array
         currAttrNames.forEach(function (currAttrName, index) {
             for (let h = 0; h < newAttrNames.length; h++) {
                 if (currAttrName === newAttrNames[h]) {
                     similarAttrs.push(currAttrName);
-                    currAttrNames.splice(index, 1)
+                    currAttrNames.splice(index, 1);
                 }
             }
         })
@@ -260,6 +265,8 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
             for (let j = 0; j < similarAttrs.length; j++) {
                 if (newAttrName === similarAttrs[j]) {
 
+                    console.log(newAttrName)
+
                     // If it the node property then return
                     if (newAttrName === "node") return;
                     
@@ -268,6 +275,7 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
                     // If the similar attribute is a class then only add new values, and remove values no longer in template class
                     if (newAttrName === "class") {
+                        console.log(attrObj[newAttrName])
                         for (let i = 0; i < currAttrMapObj[newAttrName].length; i++) {
                             attrObj[newAttrName].forEach(function (classVal) {
 
@@ -297,14 +305,17 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
         // Add brand new attributes
         newAttrNames.forEach(function (newAttrName) {
 
-            // If it the node property then return
+            // If it's the node property then return
             if (newAttrName === "node") return;
 
             if (newAttrName === "class") {
+                console.log(attrObj[newAttrName])
                 attrObj[newAttrName].forEach(function (classVal) {
+                    console.log(currAttrMapObj)
                     currAttrMapObj.node.classList.add(classVal);
                     return;
                 })
+                return
             }
             currAttrMapObj.node.setAttribute(newAttrName, attrObj[newAttrName]);
         })
@@ -322,9 +333,9 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
 
 /**
- * @param {String|Node} node   A reference to the currently displayed UI, from the "injection/Root element"
- * @param {String} templateStr    A string value/presentation of the desired UI. A Template string.
- * @returns {Node}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
+ * @param {Node} node   the injection/root node in the current DOM. Must be a Node and not a reference
+ * @param {Array} currDOMMap    The Current DOM UI map
+ * @param {Array}  templateDOMMap   The Template DOM UI map
  */
 function DOMDiff ( node, currDOMMap, templateDOMMap) {
 
@@ -347,16 +358,17 @@ function DOMDiff ( node, currDOMMap, templateDOMMap) {
 
     /**
      * if an element doesn't exist we'll let Notion biuld up a new one from ground up
+     * @param {Node} root   The injection Node
      * @param {Array} curr    An Array object of values representing the Node tree of the currently displayed UI startunng from the "Injection/Root element"
      * @param {Array} template    An Array object of values representing the Node tree of the template to be displayed.
-     * @returns {Node}  A documentFragment to be attched to the actual dom to reduce reflows and computational cost
+     * @returns {Node}  A documentFragment to be attched to the actual DOM to reduce reflows and computational cost
      */
     var smartCompare = function (root, curr, template) {
         // we get our documentFragment ready
         let node = document.createDocumentFragment();
 
         // loop through each array item
-        template.forEach(function (obj, index) {
+        Array.prototype.forEach.call(template, function (obj, index) {
 
             // if a particular element in the template's DOM doesn't exist in the current UI's DOM create a new one and append it to the original UI.
             // whether its a text node, div, span, svg, comment, to name a few. This means if the nodes in the current DOM's UI are more we remove the
@@ -374,7 +386,7 @@ function DOMDiff ( node, currDOMMap, templateDOMMap) {
 
             // If it gets here, then chances are that it does exist and has same nodeType or nodetype property, 
             // but different attributes. So we'll just diff the attributes regardless
-            // diffAttrs(mapAttrs(obj.node.parentNode), root);
+            diffAttrs(mapAttrs(obj.node.parentNode), root);
             
 
 
@@ -393,6 +405,7 @@ function DOMDiff ( node, currDOMMap, templateDOMMap) {
             // if node has children then diff them too
             if (obj.hasChildren) {
                 // smartCompare(curr[index].children, obj.children, curr[index].node);
+                DOMDiff(curr[index].node, curr[index].children, obj.children)
             }
             
         })
