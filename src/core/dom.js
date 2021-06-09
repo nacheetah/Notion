@@ -248,57 +248,58 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
         let currAttrMapObj = currAttrMap[index];
         let similarAttrs = [];
 
-        console.log(currAttrMap[index])
+        console.log(currAttrMap[index]);
+        console.log(currAttrNames);
 
         // Take all similar Attributes and put them in a new array
         currAttrNames.forEach(function (currAttrName, index) {
             for (let h = 0; h < newAttrNames.length; h++) {
                 if (currAttrName === newAttrNames[h]) {
+                    console.log(currAttrName)
                     similarAttrs.push(currAttrName);
                     currAttrNames.splice(index, 1);
                 }
             }
         })
 
+        console.log(currAttrNames);
+        console.log(similarAttrs);
+
         // Modify pre-existing attributes
-        newAttrNames.forEach(function (newAttrName, index) {
-            for (let j = 0; j < similarAttrs.length; j++) {
-                if (newAttrName === similarAttrs[j]) {
+        similarAttrs.forEach(function (similarAttrName, index) {
 
-                    console.log(newAttrName)
+            console.log(similarAttrName)
 
-                    // If it the node property then return
-                    if (newAttrName === "node") return;
-                    
-                    // Remove similar attributes from the template value
-                    newAttrNames.splice(index, 1);
+            // If it the node property then return
+            if (similarAttrName === "node") return;
+            
+            // Remove similar attributes from the template value
+            newAttrNames.splice(index, 1);
 
-                    // If the similar attribute is a class then only add new values, and remove values no longer in template class
-                    if (newAttrName === "class") {
-                        console.log(attrObj[newAttrName])
-                        for (let i = 0; i < currAttrMapObj[newAttrName].length; i++) {
-                            attrObj[newAttrName].forEach(function (classVal) {
+            // If the similar attribute is a class then only add new values, and remove values no longer in template class
+            if (similarAttrName === "class") {
+                console.log(attrObj[similarAttrName])
+                for (let i = 0; i < currAttrMapObj[similarAttrName].length; i++) {
+                    attrObj[similarAttrName].forEach(function (classVal) {
 
-                                // If class value is on current and template UI leave it alone, else it's new so add it
-                                if (classVal === currAttrMapObj[newAttrName][i]) {
-                                    return;
-                                }
-                                else if (classVal !== currAttrMapObj[newAttrName][i]) {
-                                    currAttrMapObj.node.classList.add(classVal);
-                                    currAttrMapObj.node.classList.remove(currAttrMapObj[newAttrName][i]);
-                                    return;
-                                }
-                            })
+                        // If class value is on current and template UI leave it alone, else it's new so add it
+                        if (classVal === currAttrMapObj[similarAttrName][i]) {
+                            // alert(classVal)
+                            return;
                         }
-                        return;
-                    }
-
-                    // if it isn't a class attribute then only update if the current and template values aren't the same
-                    else {
-                        if (currAttrMapObj[newAttrName] === attrObj[newAttrName]) return;
-                        currAttrMapObj.node.setAttribute(newAttrName, attrObj[newAttrName]);
-                    }
+                        else if (classVal !== currAttrMapObj[similarAttrName][i]) {
+                            console.log(classVal)
+                            currAttrMapObj.node.classList.add(classVal);
+                            return;
+                        }
+                    })
                 }
+            }
+
+            // if it isn't a class attribute then only update if the current and template values aren't the same
+            else {
+                if (currAttrMapObj[similarAttrName] === attrObj[similarAttrName]) return;
+                currAttrMapObj.node.setAttribute(similarAttrName, attrObj[similarAttrName]);
             }
         })
 

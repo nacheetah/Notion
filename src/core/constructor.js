@@ -202,7 +202,12 @@ let curr = `<div class="Old DOM Class" unchecked>old guy</div>`
 let neww = `
 hey
 <!--na wa for you oh -->
-<span role="email" unchecked style="color: white;" class="Working You Stupid Bitch-ass">I am a Span <span role="password" class="inner-span spanner">I am a span inside a span</span><div class="divider division diva">And I'm a div</div>    </span>`
+<span accesskey="nopeeeee" role="email" checked style="color: blue;" class="working you stupid bitch-asss">
+    I am a Span
+    <span class="inner-span spanner spannest">I am a span inside a span</span>
+    <span class="inner-span spanner spannest">I am a span inside a span</span>
+    <span class="inner-span spanner spannest">I am a span inside a span</span>
+</span>`
 
 let currrMap = __d.mapAttrs($$.selector("#inject-App"));
 let newwMap =  __d.mapAttrs(__d.parseToHtml(neww));
