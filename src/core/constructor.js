@@ -60,7 +60,7 @@ if ($$.byId('inject-App').children.length < 1) {
 }
 
 
-console.log(__d.getDOMMap("inject-App"));
+// console.log(__d.getDOMMap("inject-App"));
 console.log($$.selector("#inject-App").childNodes)
 console.log($$.selector("#inject-App").attributes)
 let mona = $$.selector("#inject-App").attributes;
@@ -205,12 +205,12 @@ hey
 <span accesskey="nopeeeee" role="email" checked style="color: blue;" class="working you stupid bitch-asss">
     I am a Span
     <span class="inner-span spanner spannest">I am a span inside a span</span>
-    <span class="inner-span spanner spannest">I am a span inside a span</span>
-    <span class="inner-span spanner spannest">I am a span inside a span</span>
 </span>`
 
 let currrMap = __d.mapAttrs($$.selector("#inject-App"));
 let newwMap =  __d.mapAttrs(__d.parseToHtml(neww));
+console.log(__d.getDOMMap("inject-App"));
+console.log(__d.getDOMMap(__d.parseToHtml(neww)));
 console.log(newwMap)
 console.log(newwMap[3].node.parentNode)
 
@@ -262,3 +262,19 @@ console.log($$.strictTypeOf("inject-App"))
 // Notion("hey", "hey")
 
 // console.log($$.byId("inject-App"));
+
+
+
+
+let sweet = {
+    choco: function (params) {
+        // alert("choco");
+    }
+}
+
+let sweety = Object.keys(sweet);
+console.log(sweety)
+
+sweety.forEach(function (sweeti) {
+    sweet[sweeti].call()
+})
