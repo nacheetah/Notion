@@ -278,30 +278,32 @@ var diffAttrs = function (tempAttrMap, DOMNode) {
 
             // If the similar attribute is a class then only add new values, and remove values no longer in template class
             if (similarAttrName === "class") {
-                console.log(attrObj[similarAttrName])
-                for (let i = 0; i < currAttrMapObj[similarAttrName].length; i++) {
-                    attrObj[similarAttrName].forEach(function (classVal) {
+
+                attrObj[similarAttrName].forEach(function (classVal) {
+                    for (let i = 0; i < currAttrMapObj[similarAttrName].length; i++) {
 
                         // If class value is on current and template UI leave it alone, else it's new so add it
                         if (classVal === currAttrMapObj[similarAttrName][i]) {
-                            // alert(classVal)
+                            currAttrMapObj[similarAttrName].splice(i, 1);
                             return;
-                        }
-                        else if (classVal !== currAttrMapObj[similarAttrName][i]) {
+                        } else {
                             console.log(classVal)
                             currAttrMapObj.node.classList.add(classVal);
-                            return;
                         }
-                    })
-                }
-            }
-
-            // if it isn't a class attribute then only update if the current and template values aren't the same
-            else {
+                    }
+                })
+                
+                // remove all unsimilar classes in the current DOM node
+                currAttrMapObj[similarAttrName].forEach(function (classVal) {
+                    currAttrMapObj.node.classList.remove(classVal);
+                })
+            } else {
+                // if it isn't a class attribute then only update if the current and template values aren't the same
                 if (currAttrMapObj[similarAttrName] === attrObj[similarAttrName]) return;
                 currAttrMapObj.node.setAttribute(similarAttrName, attrObj[similarAttrName]);
             }
         })
+
 
         // Add brand new attributes
         newAttrNames.forEach(function (newAttrName) {
@@ -348,6 +350,8 @@ function DOMDiff ( node, currDOMMap, templateDOMMap) {
 
     // Get the template DOM style map
     // let newMap =  mapAttrs(parseToHtml(templateStr));
+    console.log(currDOMMap);
+    console.log(templateDOMMap);
 
 
     // check if the the current UI has more nodes than the template UI, and if so remove them, else continue CORRECT AND NEEDED!!!
